@@ -1,4 +1,5 @@
-# CiscoConfParse Python3 Example - Parse Cisco Configration Files
+#Parse Cisco Configration Files
+## CiscoConfParse Python3 Module Example
 ## Work smarter, not harder.
 
 
