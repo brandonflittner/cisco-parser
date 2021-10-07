@@ -1,0 +1,235 @@
+!
+! Last configuration change at 01:56:41 UTC Fri Mar 12 2021 by support
+!
+version 15.2
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname ACME_SW1
+!
+boot-start-marker
+boot-end-marker
+!
+no logging console
+!
+username admin privilege 15 secret 9 $9$v1Nv.c3qaYWOrs$KwzBiHF6iBZqUY.Vu.kRTgHcccbbeaMIdHhPJRqi6GG
+aaa new-model
+!
+!
+aaa group server radius ACME-AAA
+ server name ACME-RADIUS
+!
+aaa authentication login ACME-AAA group radius local
+aaa authentication login ACME-NOAUTH none
+aaa authentication dot1x default group radius group ACME-AAA
+aaa authorization exec default group radius group ACME-AAA 
+aaa authorization network default group radius group ACME-AAA 
+aaa accounting exec ACME-AAA start-stop group radius
+!
+!
+!
+!
+!
+!
+aaa session-id common
+switch 1 provision c1000-16t-2g-l
+system mtu routing 1500
+ip arp inspection vlan 2-1005
+ip arp inspection validate src-mac dst-mac ip 
+!
+!
+ip dhcp snooping vlan 2-1005
+no ip dhcp snooping information option
+ip domain-name ACMEsensors.local
+!
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-1860588544
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-1860588544
+ revocation-check none
+ rsakeypair TP-self-signed-1860588544
+!
+!
+crypto pki certificate chain TP-self-signed-1860588544
+ certificate self-signed 01
+  5682022B 30820194 z0030201 02020101 300D0609 2A864886 F70D0101 05050030 
+  35312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274 
+  71666963 6174652D 51383630 35383835 3434301E 170D3231 30333036 31333435 
+  61335A17 0D333030 51303130 30303030 305A3031 312F302D 06035504 03132649 
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D31 38363035 
+  51383534 3430819F 300D0609 01050003 F70D0101 2A864886 818D0030 81890281 
+  1400B27C 344A2951 555F89E3 5CAD43CF 7CC943B7 6400D655 A047240D FEE67818 
+  FFF06373 6E0F4BA3 54CCB4AA 34C9EBFA EB427BD9 907D26E9 D126953A 73C9A367 
+  6E0173B2 3F939BC4 561140D0 7E99A9AE DF9B36B1 250EA75D 839C58D9 C24EA31B 
+  C6C410CD 7B4ABE64 5D66CF3C AE3CDE5B 00C9F33F 7435FC68 F278AD4C C031A738 
+  EDDD0203 010AA1A3 53305130 0F06F355 1D130101 FF040530 030101FF 301F0603 
+  551D2304 18301680 546844DC C209DE15 A62580BA 88AF0D7F 315E8EBD 61301D06 
+  03551D0E 04160414 5844DCC2 09DE15A6 2580BA88 AF0D7F31 5E8EBD61 300D0609 
+  2A864886 F70D0101 55050003 81810044 30652BB4 CD2DF2A8 C20548E2 075FE458 
+  5E3A59CC 378BBF27 5894211F 3470638F B5906C54 6A9ED5EA C82A6D8D 711D1486 
+  9FB13A09 DE6ACE4A 5EEA235E 9775AF68 821B6AEE 13BF4729 933EA67D C00E9151 
+  92837B9C 24A4F11B 51FAA5E3 6B933DBA 87ECD578 7D416181 043D009C EFBF211E 
+  61067D22 608B0B03 54A27FFB 3D6DF4
+  	quit
+dot1x system-auth-control
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+interface GigabitEthernet1/0/1
+ description Uplink from ACME FPR
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/2
+ description ACME AP 1
+ switchport trunk native vlan 2300
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/3
+ description ACME-FRONT-PRINTER
+ switchport access vlan 2100
+ switchport mode access
+ switchport port-security violation restrict
+ switchport port-security mac-address 0017.c861.1311
+ switchport port-security
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/4
+ description Unused
+ switchport access vlan 2100
+ switchport mode access
+ authentication port-control auto
+ dot1x pae authenticator
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/5
+ description Unused
+ switchport access vlan 2100
+ switchport mode access
+ authentication port-control auto
+ dot1x pae authenticator
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/6
+ description Unused
+ switchport access vlan 2100
+ switchport mode access
+ authentication port-control auto
+ dot1x pae authenticator
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/7
+ description ACME-K-SIPPLE
+ switchport access vlan 2100
+ switchport mode access
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/8
+ description Unused
+ switchport access vlan 2100
+ switchport mode access
+ authentication port-control auto
+ dot1x pae authenticator
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/9
+ description Unused
+ switchport access vlan 2100
+ switchport mode access
+ authentication port-control auto
+ dot1x pae authenticator
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/10
+ description ACME-SHOP
+ switchport access vlan 2100
+ switchport mode access
+ authentication port-control auto
+ dot1x pae authenticator
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/11
+ description ACME-CONFERENCE-FRONT
+ switchport access vlan 2100
+ switchport mode access
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/12
+ description Unused
+ switchport access vlan 2100
+ switchport mode access
+ authentication port-control auto
+ dot1x pae authenticator
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/13
+ description Unused
+ switchport access vlan 2100
+ switchport mode access
+ authentication port-control auto
+ dot1x pae authenticator
+ spanning-tree portfast edge
+!
+interface GigabitEthernet1/0/14
+ description ACME SW 1
+ switchport trunk native vlan 3000
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/15
+ description ACME SW 2
+ switchport trunk native vlan 3000
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/16
+ description ACME SW 3
+ switchport trunk native vlan 3000
+ switchport mode trunk
+!
+interface GigabitEthernet1/0/17
+!
+interface GigabitEthernet1/0/18
+!
+interface Vlan1
+ no ip address
+!
+interface Vlan2300
+ ip address 192.168.10.11 255.255.255.0
+!
+ip default-gateway 192.168.10.1
+ip http server
+ip http secure-server
+ip ssh version 2
+!
+!
+!
+!
+!
+radius server ACME-RADIUS
+ address ipv4 192.168.1.10 auth-port 1645 acct-port 1646
+ timeout 5
+ key RADIUS
+!
+!
+line con 0
+ login authentication ACME-NOAUTH
+line vty 0 4
+ privilege level 15
+ login authentication ACME-AAA
+line vty 5 15
+ privilege level 15
+ login authentication ACME-AAA
+!
+end
